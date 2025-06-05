@@ -26,6 +26,9 @@ let accellerationRocket = {
 
 let lastAnimationTimestamp;
 
+const kp = 0.00001;
+const kd = 0.002;
+
 window.addEventListener("pointerdown", (e) => {
   const x = e.clientX;
   const y = e.clientY;
@@ -44,6 +47,7 @@ function animate(timestamp) {
 
   updatePosition(deltaTime);
   updateVelocity(deltaTime);
+  updateAcceleration();
   draw();
 
   lastAnimationTimestamp = timestamp;
@@ -58,6 +62,18 @@ function updatePosition(deltaTime) {
 function updateVelocity(deltaTime) {
   velocityRocket.x += accellerationRocket.x * deltaTime;
   velocityRocket.y += accellerationRocket.y * deltaTime;
+}
+
+function updateAcceleration() {
+  const error = {
+    x: positionMoon.x - positionRocket.x,
+    y: positionMoon.y - positionRocket.y,
+  };
+
+  accellerationRocket = {
+    x: kp * error.x - kd * velocityRocket.x,
+    y: kp * error.y - kd * velocityRocket.y,
+  };
 }
 
 function draw() {
